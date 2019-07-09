@@ -1,10 +1,10 @@
-<?php include "includes/header.php" ?>
+<?php include "includes/admin_header.php" ?>
 
     <div id="wrapper">
 
         <!-- Navigation -->
        
-        <?php include "includes/navigation.php" ?>
+        <?php include "includes/admin_navigation.php" ?>
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -17,7 +17,26 @@
                             <small>Author</small>
                         </h1>
                         <div class="col-xs-6">
-                            <form action="">
+                            <?php 
+
+                                if(isset($_POST['submit'])){
+                                   
+                                    $cat_title = $_POST['cat_title'];
+                                    if($cat_title == "" || empty($cat_title)){
+                                        echo "This field should not be empty";
+                                    }
+                                    else{
+                                        $query = "INSERT INTO category(cat_title) ";
+                                        $query .= "VALUE('{$cat_title}') ";
+
+                                        $create_category_query = mysqli_query($connections, $query);
+                                        if(!$create_category_query){
+                                            die('QUERY FAILED' .mysqli_error($connections));
+                                        }
+                                    }
+                                }
+                             ?>
+                            <form action="" method="post">
                                 <div class="form-group">
                                     <label for="cat-title">Add Category</label>
                                     <input type="text" class="form-control" name="cat_title">
@@ -29,6 +48,14 @@
                         </div>
 
                         <div class="col-xs-6">
+
+                            <?php 
+                    
+                                $query = "SELECT * FROM category";
+                                $select_categories = mysqli_query($connections,$query);
+                        
+                            ?>
+
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -37,10 +64,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Cricket Category</td>
-                                    </tr>
+                                    <?php 
+                                        while($row = mysqli_fetch_assoc($select_categories)){
+                                                     $cat_id = $row['cat_id'];
+                                                     $cat_title = $row['cat_title'];
+                                                     echo "<tr>";
+                                                     echo "<td>{$cat_id}</td>";
+                                                     echo "<td>{$cat_title}</td>";
+                                                     echo "</tr>";
+                                            }
+                        
+                                    ?>
                                 </tbody>
                             </table>
                         </div> 
@@ -58,4 +92,4 @@
     </div>
     <!-- /#wrapper -->
 
-   <?php include "includes/footer.php" ?> 
+   <?php include "includes/admin_footer.php" ?> 
